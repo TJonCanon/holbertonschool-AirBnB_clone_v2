@@ -24,6 +24,14 @@ class FileStorage:
             for key, val in temp.items():
                 temp[key] = val.to_dict()
             json.dump(temp, f)
+    
+    def delete(self, obj=None):
+        """This will remove an object from the storage directory"""
+        if obj is not None:
+            obj_key = obj.to_dict()['__class__'] + '.' + obj.id
+            if obj_key in self.__objects.keys():
+                del self.__objects[obj_key]
+
 
     def reload(self):
         """Loads storage dictionary from file"""
