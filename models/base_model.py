@@ -3,6 +3,7 @@
 import uuid
 from datetime import datetime
 
+Base = declarative_base()
 
 class BaseModel:
     """A base class for all hbnb models"""
@@ -26,6 +27,11 @@ class BaseModel:
         """Returns a string representation of the instance"""
         cls = (str(type(self)).split('.')[-1]).split('\'')[0]
         return '[{}] ({}) {}'.format(cls, self.id, self.__dict__)
+
+    def delete(self):
+        """Deletes this BaseModel instance from the storage"""
+        from models import storage
+        storage.delete(self)
 
     def save(self):
         """Updates updated_at with current time when instance is changed"""
