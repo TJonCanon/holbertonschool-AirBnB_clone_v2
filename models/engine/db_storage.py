@@ -1,6 +1,7 @@
 #!/usr/bin/python3
 """ New db engine """
 from sqlalchemy import create_engine
+# from sqlalchemy.orm.scoping import scoped_session
 from sqlalchemy.schema import MetaData
 from sqlalchemy.orm import sessionmaker, scoped_session
 from os import getenv
