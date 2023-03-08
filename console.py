@@ -11,7 +11,8 @@ from models.city import City
 from models.amenity import Amenity
 from models.review import Review
 
-
+    #Update the def do_create(self, arg): function of your command interpreter
+    #(console.py) to allow for object creation with given parameters
 class HBNBCommand(cmd.Cmd):
     """ Contains the functionality for the HBNB console"""
 
@@ -29,6 +30,20 @@ class HBNBCommand(cmd.Cmd):
              'max_guest': int, 'price_by_night': int,
              'latitude': float, 'longitude': float
             }
+
+    def num_or_float(self, arg: str):
+        """
+        Method to convert str to int or float
+        """
+        try:
+            return int(arg)
+        except Exception:
+            pass
+
+        try:
+            return float(arg)
+        except Exception:
+            return arg
 
     def preloop(self):
         """Prints if isatty is false"""
@@ -114,30 +129,32 @@ class HBNBCommand(cmd.Cmd):
 
     def do_create(self, args):
         """ Create an object of any class"""
-        ListOfArgs = args.split()
         if not args:
             print("** class name missing **")
             return
-        elif ListOfArgs[0] not in HBNBCommand.classes:
+        
+        args = args.split(' ')
+        className = args[0]
+
+        if className not in HBNBCommand.classes:
             print("** class doesn't exist **")
             return
-        new_instance = HBNBCommand.classes[ListOfArgs[0]]()
-        for x in range(1, len(ListOfArgs)):
-            param = ListOfArgs[x].partition("=")
-            key = param[0]
-            value = param[2]
-            if '\"' in value:
-                value = value[1:-1]
-                value = value.replace("_", " ")
-            elif "." in value:
-                value = float(value)
-            else:
-                value = int(value)
-            if hasattr(new_instance, key):
-                setattr(new_instance, key, value)
-        storage.new(new_instance)
-        storage.save()
+
+        # Getting attributes
+        attributes = {}
+        for attr in args[1:]:
+            new_dict = attr.split('=', 1)
+            attributes[new_dict[0]] = new_dict[1]
+
+        new_instance = HBNBCommand.classes[className]()
+
+        for key, value in attributes.items():
+            value = value.strip("\"'").replace("_", " ")
+            value = self.num_or_float(value)
+            setattr(new_instance, key, value)
+
         print(new_instance.id)
+        new_instance.save()
 
     def help_create(self):
         """ Help information for the create method """
@@ -219,9 +236,8 @@ class HBNBCommand(cmd.Cmd):
             if args not in HBNBCommand.classes:
                 print("** class doesn't exist **")
                 return
-            for k, v in storage.all().items():
-                if k.split('.')[0] == args:
-                    print_list.append(str(v))
+            for k, v in storage.all(args).items():
+                print_list.append(str(v))
         else:
             for k, v in storage.all().items():
                 print_list.append(str(v))
@@ -332,7 +348,6 @@ class HBNBCommand(cmd.Cmd):
         """ Help information for the update class """
         print("Updates an object with new information")
         print("Usage: update <className> <id> <attName> <attVal>\n")
-
 
 if __name__ == "__main__":
     HBNBCommand().cmdloop()
