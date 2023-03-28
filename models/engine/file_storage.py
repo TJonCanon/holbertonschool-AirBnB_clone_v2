@@ -69,5 +69,5 @@ class FileStorage:
             return
 
     def close(self):
-        """ ends session """
+        """ ends session and deserializes """
         self.reload()
