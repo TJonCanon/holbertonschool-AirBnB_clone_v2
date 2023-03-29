@@ -6,18 +6,19 @@ from models import storage, state, city
 app = Flask(__name__)
 app.url_map.strict_slashes = False
 
-@app.route("/cities_by_state")
+
+@app.route("/cities_by_states")
 def states_list():
     return render_template(
         "8-cities_by_states.html",
         states=storage.all(state.State),
         cities=storage.all(city.City)
-    )
+        )
 
 
 @app.teardown_appcontext
-def teardown(cities_by_states):
-    """ close """
+def teardown(something):
+    """Call close"""
     storage.close()
 
 
