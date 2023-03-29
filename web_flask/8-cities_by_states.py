@@ -18,7 +18,7 @@ def states_list():
 
 @app.teardown_appcontext
 def teardown(something):
-    """Call close"""
+    """ close """
     storage.close()
 
 
