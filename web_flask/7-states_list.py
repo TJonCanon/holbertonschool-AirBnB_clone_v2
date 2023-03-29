@@ -2,22 +2,23 @@
 """ starts flask app """
 
 from flask import Flask, render_template
-from models import storage
-from models.state import State
+from models import storage, state
+
+app = Flask(__name__)
+app.url_map.strict_slashes = False
 
 
-app = flask(__name__)
-
-
-@app.route('/states_list', strict_slashes=False)
-def statelist():
-    return render_template("7-states_list.html", db=storage.all(State))
+@app.route("/states_list")
+def states_list():
+    states = storage.all(state.State)
+    return render_template("7-states_list.html", states=states)
 
 
 @app.teardown_appcontext
-def methd(content):
+def teardown(states_list):
+    """Call close"""
     storage.close()
 
 
-if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=5000)
+if __name__ == "__main__":
+    app.run("0.0.0.0", 5000)
